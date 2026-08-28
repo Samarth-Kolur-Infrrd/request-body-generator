@@ -1,6 +1,12 @@
+import os
 from pymongo import MongoClient
+from dotenv import load_dotenv
 
-client = MongoClient("mongodb://localhost:27017/")
+load_dotenv()
+
+MONGODB_URI = os.environ.get("MONGODB_URI")
+
+client = MongoClient(MONGODB_URI)
 
 db = client["requestBodyGeneration"]
 
