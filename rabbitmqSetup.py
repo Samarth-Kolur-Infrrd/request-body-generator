@@ -24,4 +24,15 @@ channel.queue_bind(
     routing_key="generator.queued"
 )
 
+channel.queue_declare(
+    queue="generatorCompleted",
+    durable=True
+)
+
+channel.queue_bind(
+    exchange="generator.event",
+    queue="generatorCompleted",
+    routing_key="generator.completed"
+
+)
 connection.close()
