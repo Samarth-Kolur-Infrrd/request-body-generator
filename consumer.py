@@ -9,7 +9,8 @@ from generator import generateRequestBody
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(
         host=os.environ.get("RABBITMQ_HOST", "localhost"),
-        port=5672
+        port=5672,
+        heartbeat=60
     )
 )
 

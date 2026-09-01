@@ -10,12 +10,13 @@ from consumer import getCompletedRequestBodyFromQueue
 
 app = FastAPI()
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(
+params = pika.ConnectionParameters(
         host = os.environ.get("RABBITMQ_HOST", "localhost"),
-        port = 5672
+        port = 5672,
+        heartbeat=60
     )
-)
+
+connection = pika.BlockingConnection( params )
 
 channel = connection.channel()
 
