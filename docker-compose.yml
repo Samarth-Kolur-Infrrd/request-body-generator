@@ -1,0 +1,51 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: generator-mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: generator-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  rabbitmq-setup:
+    build:
+      context: .
+      dockerfile: dockerfile
+    command: ["python", "rabbitmqSetup.py"]
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      mongo:
+        condition: service_started
+      rabbitmq-setup:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+    external: true

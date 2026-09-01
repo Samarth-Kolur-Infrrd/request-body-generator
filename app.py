@@ -3,6 +3,7 @@ import uvicorn
 import pika
 import json
 import time
+import os
 
 from generator import generateRequestBody
 from consumer import getCompletedRequestBodyFromQueue
@@ -11,7 +12,7 @@ app = FastAPI()
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(
-        host = "localhost",
+        host = os.environ.get("RABBITMQ_HOST", "localhost"),
         port = 5672
     )
 )
@@ -35,7 +36,6 @@ async def requestgenerator(document_id: str):
     waited = 0
     outputRequest = None
     while waited < timeout:
-        time.sleep(3)
         outputRequest = getCompletedRequestBodyFromQueue()
         if outputRequest is not None:
             break

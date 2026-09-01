@@ -1,7 +1,7 @@
 import pika
-
+import os 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host="localhost",
+    pika.ConnectionParameters(host=os.environ.get("RABBITMQ_HOST", "localhost"),
                               port=5672)
 )
 

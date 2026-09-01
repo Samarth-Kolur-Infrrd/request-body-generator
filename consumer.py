@@ -1,12 +1,14 @@
 import pika
 import json
 import traceback
+import os
+
 
 from generator import generateRequestBody
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(
-        host="localhost",
+        host=os.environ.get("RABBITMQ_HOST", "localhost"),
         port=5672
     )
 )
