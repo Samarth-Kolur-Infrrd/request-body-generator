@@ -36,6 +36,18 @@ services:
     build:
       context: ..
       dockerfile: docker/dockerfile
+    develop:
+      watch:
+        - action: sync+restart
+          path: ../app
+          target: /app/app
+        - action: sync+restart
+          path: ../rabbitmq
+          target: /app/rabbitmq
+        - action: sync+restart
+          path: ../buildersUtils
+          target: /app/buildersUtils
+
     environment:
       MONGODB_URI: mongodb://mongo:27017/
       RABBITMQ_HOST: rabbitmq
@@ -50,6 +62,14 @@ services:
     build:
       context: ..
       dockerfile: docker/dockerfile
+    develop:
+      watch:
+        - action: sync+restart
+          path: ../app
+          target: /app/app
+        - action: sync+restart
+          path: ../buildersUtils
+          target: /app/buildersUtils
     command: ["python","-m","app.app"]
     ports:
       - "8000:8000"
