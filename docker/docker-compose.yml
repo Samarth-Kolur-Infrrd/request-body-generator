@@ -23,9 +23,9 @@ services:
 
   rabbitmq-setup:
     build:
-      context: .
-      dockerfile: dockerfile
-    command: ["python", "rabbitmqSetup.py"]
+      context: ..
+      dockerfile: docker/dockerfile
+    command: ["python","-m", "rabbitmq.rabbitmqSetup"]
     environment:
       RABBITMQ_HOST: rabbitmq
     depends_on:
@@ -34,8 +34,8 @@ services:
 
   consumer:
     build:
-      context: .
-      dockerfile: dockerfile
+      context: ..
+      dockerfile: docker/dockerfile
     environment:
       MONGODB_URI: mongodb://mongo:27017/
       RABBITMQ_HOST: rabbitmq
@@ -45,11 +45,12 @@ services:
       rabbitmq-setup:
         condition: service_completed_successfully
     restart: unless-stopped
+
   app:
     build:
-      context: .
-      dockerfile: dockerfile
-    command: ["python","app.py"]
+      context: ..
+      dockerfile: docker/dockerfile
+    command: ["python","-m","app.app"]
     ports:
       - "8000:8000"
     environment:

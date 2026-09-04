@@ -5,8 +5,7 @@ import json
 import time
 import os
 
-from generator import generateRequestBody
-from consumer import getCompletedRequestBodyFromQueue
+from rabbitmq.consumer import getCompletedRequestBodyFromQueue
 
 app = FastAPI()
 
@@ -20,7 +19,7 @@ connection = pika.BlockingConnection( params )
 
 channel = connection.channel()
 
-def publish_queued(inputId):
+def publish_queued(inputId: dict):
     global connection, channel
     if connection.is_closed:
         connection = pika.BlockingConnection( params )
@@ -47,7 +46,7 @@ def publish_queued(inputId):
         )
 
 @app.get("/requestGenerator/{document_id}")
-async def requestgenerator(document_id: str):
+async def requestgenerator(document_id: str) -> dict:
     inputId = {"documentId": document_id}
     publish_queued(inputId)
 

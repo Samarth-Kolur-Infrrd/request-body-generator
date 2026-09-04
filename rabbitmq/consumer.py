@@ -3,8 +3,7 @@ import json
 import traceback
 import os
 
-
-from generator import generateRequestBody
+from app.generator import generateRequestBody
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(

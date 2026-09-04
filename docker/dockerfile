@@ -2,13 +2,9 @@ FROM python:3.12.3-slim
 
 WORKDIR /app
 
-COPY app.py .
-COPY consumer.py .
-COPY generator.py .
-COPY mongoConnection.py .
-COPY builders.py .
+COPY app/ ./app/
+COPY rabbitmq/ ./rabbitmq/
 COPY buildersUtils/ ./buildersUtils/
-COPY rabbitmqSetup.py .
 
 RUN pip install pika
 RUN pip install pymongo
@@ -18,4 +14,4 @@ RUN pip install uvicorn
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python","consumer.py"]
+CMD ["python","-m","rabbitmq.consumer"]

@@ -1,6 +1,6 @@
-from mongoConnection import getSubExtractionField
+from app.mongoConnection import getSubExtractionField
 
-def buildValues(id):
+def buildValues(id: str) -> list:
     subfields = getSubExtractionField(id)
     outputValues = []
     for subfield in subfields:
