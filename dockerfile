@@ -7,6 +7,7 @@ COPY consumer.py .
 COPY generator.py .
 COPY mongoConnection.py .
 COPY builders.py .
+COPY buildersUtils/ ./buildersUtils/
 COPY rabbitmqSetup.py .
 
 RUN pip install pika

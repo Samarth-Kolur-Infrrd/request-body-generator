@@ -17,13 +17,19 @@ db = client["requestBodyGeneration"]
 documentCollection = db["document"]
 pageCollection = db["page"]
 extractionFieldCollection = db["extraction_field"]
+subExtractionField = db["sub_extraction_field"]
 
 def getData(inputId):
     try:
         document = list(documentCollection.find({"_id":inputId["documentId"]}))
         page = list(pageCollection.find(inputId))
         field = list(extractionFieldCollection.find(inputId))
+        
         return [ document, page, field ]
     except PyMongoError:
         logger.exception("Mongo query failed for inputId=%s against %s", inputId, MONGODB_URI)
         raise
+
+def getSubExtractionField(id):
+    subfield = list(subExtractionField.find({"extractionFieldId": id}))
+    return subfield
