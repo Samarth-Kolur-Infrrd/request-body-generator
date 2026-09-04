@@ -20,17 +20,36 @@ connection = pika.BlockingConnection( params )
 
 channel = connection.channel()
 
+def publish_queued(inputId):
+    global connection, channel
+    if connection.is_closed:
+        connection = pika.BlockingConnection( params )
+        channel = connection.channel()
+    try:
+        channel.basic_publish(
+            exchange = "generator.event",
+            routing_key = "generator.queued",
+            body = json.dumps(inputId),
+            properties = pika.BasicProperties(
+                delivery_mode = pika.DeliveryMode.Persistent
+            )
+        )
+    except (pika.exceptions.StreamLostError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed):
+        connection = pika.BlockingConnection( params )
+        channel = connection.channel()
+        channel.basic_publish(
+            exchange = "generator.event",
+            routing_key = "generator.queued",
+            body = json.dumps(inputId),
+            properties = pika.BasicProperties(
+                delivery_mode = pika.DeliveryMode.Persistent
+            )
+        )
+
 @app.get("/requestGenerator/{document_id}")
 async def requestgenerator(document_id: str):
     inputId = {"documentId": document_id}
-    channel.basic_publish(
-        exchange = "generator.event",
-        routing_key = "generator.queued",
-        body = json.dumps(inputId),
-        properties = pika.BasicProperties(
-            delivery_mode = pika.DeliveryMode.Persistent
-        )
-    )
+    publish_queued(inputId)
 
     timeout = 10 
     poll_interval = 0.5
@@ -49,4 +68,4 @@ async def requestgenerator(document_id: str):
     return outputRequest
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

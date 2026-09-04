@@ -37,17 +37,46 @@ def generatorQueue(ch, method, properties, body):
     except Exception as e:
         traceback.print_exc()
         print("Processing Failed")
+        channel.basic_nack(
+            delivery_tag = method.delivery_tag,
+            requeue = False
+        )
 
 
 def getCompletedRequestBodyFromQueue():
+    global connection, channel
     print("Inside the completed queue, preparing to return the generated request body")
 
     result = None
 
-    method, properties, body = channel.basic_get(
-        queue="generatorCompleted",
-        auto_ack=False
-    )
+    if connection.is_closed:
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=os.environ.get("RABBITMQ_HOST", "localhost"),
+                port=5672,
+                heartbeat=60
+            )
+        )
+        channel = connection.channel()
+
+    try:
+        method, properties, body = channel.basic_get(
+            queue="generatorCompleted",
+            auto_ack=False
+        )
+    except (pika.exceptions.StreamLostError, pika.exceptions.ConnectionClosed, pika.exceptions.ChannelClosed):
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=os.environ.get("RABBITMQ_HOST", "localhost"),
+                port=5672,
+                heartbeat=60
+            )
+        )
+        channel = connection.channel()
+        method, properties, body = channel.basic_get(
+            queue="generatorCompleted",
+            auto_ack=False
+        )
 
     if method is None:
         return None
