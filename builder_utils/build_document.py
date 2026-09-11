@@ -1,8 +1,8 @@
-def buildDocuments(documents: list, output: dict, fields: list, pages: list) -> dict:
-    builtdocumentList = []
+def build_documents(documents: list, output: dict, fields: list, pages: list) -> dict:
+    built_document_list = []
     
     for document in documents:
-        documentData = {
+        document_data = {
             "id": document.get("_id"),
             "name": document.get("fileName"),
             "fileType": document.get("fileType"),
@@ -17,7 +17,7 @@ def buildDocuments(documents: list, output: dict, fields: list, pages: list) -> 
                         }
         
         if document.get("isCorrected"):
-            correctedDetails = {
+            corrected_details = {
                 "splitDocumentPath": document.get("splitDocumentPath"),
                 "splitCorrectionStartTime":document.get("splitCorrectionStartTime"),
                 "splitCorrectionEndTime": document.get("splitCorrectionEndTime"),
@@ -48,9 +48,9 @@ def buildDocuments(documents: list, output: dict, fields: list, pages: list) -> 
                     }
                 }
             }
-            documentData.update(correctedDetails)
+            document_data.update(corrected_details)
 
-        otherFields = {
+        other_fields = {
             "documentExtractionStartDate": document.get("documentExtractionStartDate"),
             "documentReceivedDate": document.get("documentReceivedDate"),
             "lastModifiedDate": document.get("lastModifiedDate"),
@@ -63,7 +63,7 @@ def buildDocuments(documents: list, output: dict, fields: list, pages: list) -> 
             "totalBlankPages": document.get("totalBlankPages"),
             "totalPages": document.get("totalPages")
             }
-        documentData.update(otherFields)               
-        builtdocumentList.append(documentData)
-    output["documents"] = builtdocumentList
+        document_data.update(other_fields)               
+        built_document_list.append(document_data)
+    output["documents"] = built_document_list
     return output

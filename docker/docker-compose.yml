@@ -25,7 +25,7 @@ services:
     build:
       context: ..
       dockerfile: docker/dockerfile
-    command: ["python","-m", "rabbitmq.rabbitmqSetup"]
+    command: ["python","-m", "rabbitmq.rabbitmq_setup"]
     environment:
       RABBITMQ_HOST: rabbitmq
     depends_on:
@@ -68,8 +68,8 @@ services:
           path: ../app
           target: /app/app
         - action: sync+restart
-          path: ../buildersUtils
-          target: /app/buildersUtils
+          path: ../builders_utils
+          target: /app/builders_utils
     command: ["python","-m","app.app"]
     ports:
       - "8000:8000"

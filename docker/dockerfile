@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY app/ ./app/
 COPY rabbitmq/ ./rabbitmq/
-COPY buildersUtils/ ./buildersUtils/
+COPY builders_utils/ ./builders_utils/
 
 RUN pip install pika
 RUN pip install pymongo

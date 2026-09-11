@@ -5,7 +5,7 @@ import json
 import time
 import os
 
-from rabbitmq.consumer import getCompletedRequestBodyFromQueue
+from rabbitmq.consumer import get_completed_request_body_from_queue
 
 app = FastAPI()
 
@@ -19,7 +19,7 @@ connection = pika.BlockingConnection( params )
 
 channel = connection.channel()
 
-def publish_queued(inputId: dict):
+def publish_queued(input_id: dict):
     global connection, channel
     if connection.is_closed:
         connection = pika.BlockingConnection( params )
@@ -28,7 +28,7 @@ def publish_queued(inputId: dict):
         channel.basic_publish(
             exchange = "generator.event",
             routing_key = "generator.queued",
-            body = json.dumps(inputId),
+            body = json.dumps(input_id),
             properties = pika.BasicProperties(
                 delivery_mode = pika.DeliveryMode.Persistent
             )
@@ -39,32 +39,33 @@ def publish_queued(inputId: dict):
         channel.basic_publish(
             exchange = "generator.event",
             routing_key = "generator.queued",
-            body = json.dumps(inputId),
+            body = json.dumps(input_id),
             properties = pika.BasicProperties(
                 delivery_mode = pika.DeliveryMode.Persistent
             )
         )
 
 @app.get("/requestGenerator/{document_id}")
-async def requestgenerator(document_id: str) -> dict:
-    inputId = {"documentId": document_id}
-    publish_queued(inputId)
+async def request_generator(document_id: str) -> dict:
+    input_id = {"documentId": document_id}
+    publish_queued(input_id)
 
     timeout = 10 
     poll_interval = 0.5
     waited = 0
-    outputRequest = None
+    output_request = None
     while waited < timeout:
-        outputRequest = getCompletedRequestBodyFromQueue()
-        if outputRequest is not None:
+        output_request = get_completed_request_body_from_queue()
+        if output_request is not None:
             break
         time.sleep(poll_interval)
         waited += poll_interval
 
-    if outputRequest is None:
+    if output_request is None:
         return {"result": "TIMEOUT"}
     
-    return outputRequest
+    return output_request
+ 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,7 +1,7 @@
-from buildersUtils.buildValues import buildValues
+from builder_utils.build_values import build_values
 
-def buildFields(fields: list) -> list:
-    builtfields = []
+def build_fields(fields: list) -> list:
+    built_fields = []
     for field in fields:
         if field.get("hidden") == True:
             continue
@@ -52,7 +52,7 @@ def buildFields(fields: list) -> list:
             structured_field.update(type_based_fields)
         
         else:
-            values = buildValues(field.get("_id"))
+            values = build_values(field.get("_id"))
             type_based_fields = {
                 "pageNumber" : field.get("pageNumber"),
                 "values": values,
@@ -68,5 +68,5 @@ def buildFields(fields: list) -> list:
             }
             structured_field.update(type_based_fields)
 
-        builtfields.append(structured_field)
-    return builtfields
+        built_fields.append(structured_field)
+    return built_fields

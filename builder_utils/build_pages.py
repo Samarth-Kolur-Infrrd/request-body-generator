@@ -1,5 +1,5 @@
-def buildPages(pages:list)->dict:
-    builtpages = []
+def build_pages(pages:list)->dict:
+    built_pages = []
     for page in pages:
         structured_page = {
             "id": page.get("_id"),
@@ -19,5 +19,5 @@ def buildPages(pages:list)->dict:
             "optimizedImageUrl": page.get("optimizedImageUrl"),
             "rotation": page.get("rotation")
         }
-        builtpages.append(structured_page)
-    return builtpages
+        built_pages.append(structured_page)
+    return built_pages

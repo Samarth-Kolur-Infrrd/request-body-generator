@@ -1,8 +1,8 @@
-from app.mongoConnection import getData
-from buildersUtils.builders import builder
+from app.mongo_connection import get_data
+from builder_utils.builders import builder
 
-def generateRequestBody(inputId: dict) -> dict:
-    Collections = getData(inputId)
+def generate_request_body(input_id: dict) -> dict:
+    collections = get_data(input_id)
     output = {}
-    output = builder(Collections, output)
+    output = builder(collections, output)
     return output

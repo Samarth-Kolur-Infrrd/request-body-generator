@@ -15,24 +15,24 @@ channel.exchange_declare(
 )
 
 channel.queue_declare(
-    queue="generatorQueue",
+    queue="generator_queue",
     durable=True
 )
 
 channel.queue_bind(
     exchange="generator.event",
-    queue="generatorQueue",
+    queue="generator_queue",
     routing_key="generator.queued"
 )
 
 channel.queue_declare(
-    queue="generatorCompleted",
+    queue="generator_completed",
     durable=True
 )
 
 channel.queue_bind(
     exchange="generator.event",
-    queue="generatorCompleted",
+    queue="generator_completed",
     routing_key="generator.completed"
 
 )
