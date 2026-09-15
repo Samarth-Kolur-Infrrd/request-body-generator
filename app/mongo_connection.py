@@ -34,9 +34,8 @@ def get_sub_extraction_field(id:str) -> list:
     subfield = list(sub_extraction_field.find({"extractionFieldId": id}))
     return subfield
 
-def is_valid_generic_table(extraction_field_id, sub_extraction_collateral_parent):
-    if list(sub_extraction_field.find({"extractionFieldId":extraction_field_id, 
-                                     "subExtractionCollateralParent": sub_extraction_collateral_parent})):
-        return False
-    else:
-        return True
+def get_collateral_records(extraction_field_id):
+    return list(sub_extraction_field.find({"extractionFieldId": extraction_field_id}))
+
+def get_sub_extraction_parent_table(parent_id):
+    return list(sub_extraction_field.find({"subExtractionCollateralParent": parent_id}))

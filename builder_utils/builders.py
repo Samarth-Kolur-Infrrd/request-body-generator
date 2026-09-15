@@ -4,7 +4,7 @@ from builder_utils.build_pages import build_pages
 from builder_utils.build_fields import build_fields
 
 def builder(data: list, output: dict) -> dict:
-    fields = build_fields(data[2])
+    fields = build_fields(data[2],"normal", "")
     pages = build_pages(data[1])
 
     output = build_headers(data,output)

@@ -1,72 +1,35 @@
-from builder_utils.build_values import build_values
+from app.mongo_connection import get_collateral_records, get_sub_extraction_parent_table
+from builder_utils.build_values import build_generic_table_value
 
-def build_fields(fields: list) -> list:
+def build_fields(fields: list, type: str, id: str) -> list:
     built_fields = []
+    sub_extraction_parent_table = get_sub_extraction_parent_table(id)
+
     for field in fields:
+
         if field.get("hidden") == True:
             continue
-        structured_field = { 
-            "_id": field.get("_id"),
-            "name": field.get("fieldName"),
-            "type": field.get("fieldType"),
-            "dataType": field.get("dataType"),
-            "startX": field.get("startX"),
-            "startY": field.get("startY"),
-            "endX": field.get("endX"),
-            "endY": field.get("endY"),
-        }
-        
-        if field.get("fieldType") == "Single Value":
-            type_based_fields = {
-                "startIndex": field.get("startIndex"),
-                "endIndex": field.get("endIndex"),
-                "confidence": field.get("confidence"),
-                "pageNumber": field.get("pageNumber"),
-                "additionalAttributes": field.get("additionalAttributes"),
-                "wordCoordinates": field.get("wordCoordinates"),
-                "value": field.get("value"),
-                "question": field.get("question"),
-                "fieldId": field.get("fieldId"),
-                "extractedUsing": field.get("extractedUsing"),
-                "alternateCandidates":field.get("alternateCandidates")
-            }
-            structured_field.update(type_based_fields)
 
-        elif field.get("fieldType") == "Generic Table":
-            type_based_fields = {
-                "startIndex": field.get("startIndex"),
-                "endIndex":field.get("endIndex"),
-                "confidence":field.get("confidence"),
-                "pageNumber":field.get("pageNumber"),
-                "additionalAttributes": field.get("additionalAttributes"),
-                "wordCoordinates": field.get("wordCoordinates"),
-                "headers": field.get("headers"),
-                "values": field.get("values"),
-                "formattedValues":field.get("formattedValues"),
-                "fieldId": field.get("fieldId"),
-                "extractedUsing":field.get("extractedUsing"),
-                "alternateCandidates": field.get("alternateCandidates"),
-                "order":field.get("order"),
-                "extractionTableType": field.get("extractionTableType"),
-            }
-            structured_field.update(type_based_fields)
-        
+        if field.get("fieldType") == "Generic Table" and type == "normal":
+            field["values"] = build_generic_table_value(field.get("_id"))
         else:
-            values = build_values(field.get("_id"))
-            type_based_fields = {
-                "pageNumber" : field.get("pageNumber"),
-                "values": values,
-                "correctedBy": field.get("correctedBy"),
-                "correctedUserName"	: field.get("correctedUserName"),
-                "correctedUserEmail"	: field.get("correctedUserEmail"),
-                "correctedOn"	: field.get("correctedOn"),
-                "extractedConfidence": field.get("extractedConfidence"),
-                "fieldId"	: field.get("fieldId"),
-                "extractedUsing": field.get("extractedUsing"),
-                "alternateCandidates": field.get("alternateCandidates"),
-                "order"	: field.get("order")
-            }
-            structured_field.update(type_based_fields)
+            field["value"] = sub_extraction_parent_table
 
-        built_fields.append(structured_field)
+        if field.get("fieldType") == "Object List":
+            field["values"] = build_collateral_value(field.get("_id"))
+
+        built_fields.append( field )
+
     return built_fields
+
+def build_collateral_value(extraction_field_id: str) -> list:
+    values = []
+    sub_extraction_records = get_collateral_records(extraction_field_id)
+    print(sub_extraction_records)
+    
+    for record in sub_extraction_records:
+        sub_value_records = record.get("values")
+        print(sub_value_records)
+        values.append(build_fields(sub_value_records,"collateral", extraction_field_id))
+
+    return values
