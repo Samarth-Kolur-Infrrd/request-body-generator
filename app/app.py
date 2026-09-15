@@ -4,8 +4,11 @@ import pika
 import json
 import time
 import os
+import logging
 
 from rabbitmq.consumer import get_completed_request_body_from_queue
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -47,6 +50,7 @@ def publish_queued(input_id: dict):
 
 @app.get("/requestGenerator/{document_id}")
 async def request_generator(document_id: str) -> dict:
+    logger.info("DOCUMENT ID RECIEVED")
     input_id = {"documentId": document_id}
     publish_queued(input_id)
 
@@ -62,6 +66,7 @@ async def request_generator(document_id: str) -> dict:
         waited += poll_interval
 
     if output_request is None:
+        logger.warning("SOMETHING WENT WRONG. REQUEST TIMEOUT")
         return {"result": "TIMEOUT"}
     
     return output_request

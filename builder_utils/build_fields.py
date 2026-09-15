@@ -25,11 +25,9 @@ def build_fields(fields: list, type: str, id: str) -> list:
 def build_collateral_value(extraction_field_id: str) -> list:
     values = []
     sub_extraction_records = get_collateral_records(extraction_field_id)
-    print(sub_extraction_records)
     
     for record in sub_extraction_records:
         sub_value_records = record.get("values")
-        print(sub_value_records)
         values.append(build_fields(sub_value_records,"collateral", extraction_field_id))
 
     return values
